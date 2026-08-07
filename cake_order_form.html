@@ -1,0 +1,769 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Custom Cake Order Form</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,400;9..144,500;9..144,600;9..144,700&family=Work+Sans:wght@400;500;600;700&family=IBM+Plex+Mono:wght@500&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --cream:#FBF3EF;
+    --card:#FFFFFF;
+    --plum:#6B2737;
+    --plum-dark:#4C1B27;
+    --gold:#C99A3D;
+    --pistachio:#7C9473;
+    --ink:#2B2320;
+    --ink-soft:#7A6F68;
+    --line:#EAD9D2;
+    --danger:#B3402C;
+  }
+  *{box-sizing:border-box;}
+  body{
+    margin:0;
+    background:var(--cream);
+    color:var(--ink);
+    font-family:'Work Sans',sans-serif;
+    line-height:1.5;
+  }
+  h1,h2,h3,.display{font-family:'Fraunces',serif;}
+  .mono{font-family:'IBM Plex Mono',monospace;}
+
+  .wrap{
+    max-width:960px;
+    margin:0 auto;
+    padding:0 20px 80px;
+  }
+
+  /* ---------- HEADER ---------- */
+  header.top{
+    padding:44px 20px 28px;
+    text-align:center;
+    position:relative;
+  }
+  header.top .eyebrow{
+    font-family:'IBM Plex Mono',monospace;
+    font-size:12px;
+    letter-spacing:.14em;
+    text-transform:uppercase;
+    color:var(--plum);
+    margin-bottom:10px;
+  }
+  header.top h1{
+    font-size:clamp(32px,5vw,50px);
+    font-weight:600;
+    margin:0 0 8px;
+    color:var(--plum-dark);
+  }
+  header.top p{
+    color:var(--ink-soft);
+    max-width:520px;
+    margin:0 auto;
+    font-size:15px;
+  }
+
+  /* ---------- LAYOUT: tracker + form ---------- */
+  .layout{
+    display:grid;
+    grid-template-columns:180px 1fr;
+    gap:28px;
+    align-items:start;
+  }
+  @media (max-width:760px){
+    .layout{grid-template-columns:1fr;}
+    .tracker{
+      position:sticky;top:0;z-index:20;
+      display:flex;flex-direction:row;gap:0;
+      background:var(--cream);
+      padding:10px 0 14px;
+      overflow-x:auto;
+    }
+    .tracker .tier{flex:1;min-width:64px;}
+    .tracker .tier .label{display:none;}
+  }
+
+  .tracker{
+    position:sticky;
+    top:24px;
+    display:flex;
+    flex-direction:column;
+    gap:0;
+  }
+  .tracker .tier{
+    display:flex;
+    align-items:center;
+    gap:10px;
+    padding:9px 0;
+    position:relative;
+  }
+  .tracker .tier .dot{
+    width:13px;height:13px;border-radius:50%;
+    border:2px solid var(--line);
+    background:var(--card);
+    flex-shrink:0;
+    transition:.25s;
+  }
+  .tracker .tier.done .dot{
+    background:var(--gold);
+    border-color:var(--gold);
+    box-shadow:0 0 0 3px rgba(201,154,61,.18);
+  }
+  .tracker .tier .label{
+    font-size:12.5px;
+    color:var(--ink-soft);
+    font-weight:500;
+  }
+  .tracker .tier.done .label{color:var(--plum-dark);}
+  .tracker .tier:not(:last-child)::after{
+    content:'';
+    position:absolute;
+    left:6px;top:26px;
+    width:1px;height:calc(100% - 4px);
+    background:var(--line);
+  }
+
+  /* ---------- CARDS / SECTIONS ---------- */
+  section.card{
+    background:var(--card);
+    border:1px solid var(--line);
+    border-radius:14px;
+    padding:26px 28px;
+    margin-bottom:20px;
+  }
+  section.card h2{
+    font-size:21px;
+    margin:0 0 4px;
+    color:var(--plum-dark);
+    display:flex;
+    align-items:baseline;
+    gap:10px;
+  }
+  section.card h2 .num{
+    font-family:'IBM Plex Mono',monospace;
+    font-size:12px;
+    color:var(--gold);
+    letter-spacing:.06em;
+  }
+  section.card .sub{
+    color:var(--ink-soft);
+    font-size:13.5px;
+    margin:0 0 18px;
+  }
+
+  label.field{
+    display:block;
+    font-size:13px;
+    font-weight:600;
+    color:var(--ink);
+    margin-bottom:6px;
+  }
+  input[type=text],input[type=tel],input[type=email],input[type=date],select,textarea{
+    width:100%;
+    padding:11px 13px;
+    border:1.4px solid var(--line);
+    border-radius:9px;
+    font-family:inherit;
+    font-size:14.5px;
+    color:var(--ink);
+    background:#fff;
+    transition:border-color .15s;
+  }
+  input:focus,select:focus,textarea:focus{
+    outline:none;
+    border-color:var(--plum);
+  }
+  .grid2{display:grid;grid-template-columns:1fr 1fr;gap:16px;}
+  @media (max-width:600px){.grid2{grid-template-columns:1fr;}}
+  .field-block{margin-bottom:16px;}
+
+  /* choice pills */
+  .choices{display:flex;flex-wrap:wrap;gap:10px;}
+  .choice{
+    position:relative;
+  }
+  .choice input{position:absolute;opacity:0;width:1px;height:1px;}
+  .choice label{
+    display:block;
+    padding:9px 15px;
+    border:1.4px solid var(--line);
+    border-radius:999px;
+    font-size:13.5px;
+    cursor:pointer;
+    color:var(--ink);
+    background:#fff;
+    transition:.15s;
+    user-select:none;
+  }
+  .choice input:checked + label{
+    background:var(--plum);
+    border-color:var(--plum);
+    color:#fff;
+  }
+  .choice input:focus-visible + label{outline:2px solid var(--plum);outline-offset:2px;}
+
+  fieldset{border:none;padding:0;margin:0 0 18px;}
+  legend.field{padding:0;margin-bottom:8px;}
+
+  .conditional{
+    margin-top:12px;
+    padding:14px 16px;
+    background:#FBF6F0;
+    border:1px dashed var(--line);
+    border-radius:10px;
+    display:none;
+  }
+  .conditional.show{display:block;}
+
+  /* photo upload blocks */
+  .photo-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:16px;}
+  @media (max-width:700px){.photo-grid{grid-template-columns:1fr;}}
+  .photo-slot{
+    border:1.4px dashed var(--line);
+    border-radius:12px;
+    padding:14px;
+    text-align:center;
+    background:#FBF6F0;
+  }
+  .photo-slot .thumb{
+    width:100%;
+    height:120px;
+    border-radius:8px;
+    background:#fff;
+    border:1px solid var(--line);
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    overflow:hidden;
+    margin-bottom:10px;
+    color:var(--ink-soft);
+    font-size:12px;
+  }
+  .photo-slot .thumb img{width:100%;height:100%;object-fit:cover;}
+  .photo-slot input[type=file]{
+    font-size:12px;
+    margin-bottom:8px;
+    width:100%;
+  }
+  .photo-slot textarea{min-height:52px;font-size:13px;resize:vertical;}
+
+  /* submit */
+  .submit-row{
+    display:flex;
+    justify-content:flex-end;
+    gap:12px;
+    margin-top:8px;
+  }
+  button{
+    font-family:'Work Sans',sans-serif;
+    font-weight:600;
+    font-size:14.5px;
+    border-radius:999px;
+    padding:13px 26px;
+    cursor:pointer;
+    border:1.4px solid transparent;
+    transition:.15s;
+  }
+  .btn-primary{background:var(--plum);color:#fff;}
+  .btn-primary:hover{background:var(--plum-dark);}
+  .btn-ghost{background:transparent;border-color:var(--line);color:var(--ink);}
+  .btn-ghost:hover{border-color:var(--plum);color:var(--plum);}
+  .error-msg{
+    color:var(--danger);
+    font-size:13px;
+    margin-top:10px;
+    display:none;
+    font-weight:600;
+  }
+
+  /* ---------- SUMMARY VIEW ---------- */
+  #summaryView{display:none;}
+  #summaryView .receipt{
+    background:var(--card);
+    border:1px solid var(--line);
+    border-radius:14px;
+    padding:34px 38px;
+  }
+  #summaryView h2.title{
+    font-size:26px;color:var(--plum-dark);margin:0 0 2px;
+  }
+  #summaryView .order-id{
+    font-family:'IBM Plex Mono',monospace;
+    font-size:12px;color:var(--ink-soft);margin-bottom:22px;
+  }
+  .rline{
+    display:flex;
+    justify-content:space-between;
+    gap:20px;
+    padding:11px 0;
+    border-bottom:1px solid var(--line);
+    font-size:14px;
+  }
+  .rline:last-child{border-bottom:none;}
+  .rline .k{color:var(--ink-soft);min-width:160px;}
+  .rline .v{text-align:right;font-weight:500;}
+  .rblock{margin:22px 0 8px;}
+  .rblock h3{
+    font-size:13px;text-transform:uppercase;letter-spacing:.08em;
+    color:var(--gold);margin:0 0 8px;font-family:'Work Sans',sans-serif;font-weight:700;
+  }
+  .summary-photos{display:grid;grid-template-columns:repeat(3,1fr);gap:14px;margin-top:10px;}
+  @media (max-width:600px){.summary-photos{grid-template-columns:1fr;}}
+  .summary-photos figure{margin:0;border:1px solid var(--line);border-radius:10px;overflow:hidden;background:#fff;}
+  .summary-photos img{width:100%;height:130px;object-fit:cover;display:block;}
+  .summary-photos figcaption{padding:8px 10px;font-size:12.5px;color:var(--ink-soft);}
+
+  .receipt-actions{
+    display:flex;flex-wrap:wrap;gap:10px;margin-top:26px;
+  }
+
+  @media print{
+    header.top,.tracker,.receipt-actions{display:none !important;}
+    body{background:#fff;}
+    #summaryView .receipt{border:none;padding:0;}
+    .wrap{padding:0;max-width:100%;}
+  }
+</style>
+</head>
+<body>
+
+<header class="top">
+  <div class="eyebrow">Made to order &middot; baked fresh</div>
+  <h1>Custom Cake Order</h1>
+  <p>Build your cake layer by layer &mdash; pick a base, a filling, a frosting, a size, then tell us how you'd like it decorated.</p>
+</header>
+
+<div class="wrap">
+<div class="layout">
+
+  <!-- TIER TRACKER -->
+  <nav class="tracker" id="tracker" aria-label="Order progress">
+    <div class="tier" data-for="s-contact"><span class="dot"></span><span class="label">Your info</span></div>
+    <div class="tier" data-for="s-cake"><span class="dot"></span><span class="label">Cake &amp; flavor</span></div>
+    <div class="tier" data-for="s-filling"><span class="dot"></span><span class="label">Filling</span></div>
+    <div class="tier" data-for="s-frosting"><span class="dot"></span><span class="label">Frosting</span></div>
+    <div class="tier" data-for="s-size"><span class="dot"></span><span class="label">Size</span></div>
+    <div class="tier" data-for="s-decor"><span class="dot"></span><span class="label">Decor</span></div>
+    <div class="tier" data-for="s-photos"><span class="dot"></span><span class="label">Inspo photos</span></div>
+  </nav>
+
+  <!-- FORM -->
+  <form id="orderForm" novalidate>
+
+    <section class="card" id="s-contact">
+      <h2><span class="num">01</span>Your Information</h2>
+      <p class="sub">So we know who this beautiful cake is for.</p>
+      <div class="grid2">
+        <div class="field-block">
+          <label class="field" for="name">Full name *</label>
+          <input type="text" id="name" required>
+        </div>
+        <div class="field-block">
+          <label class="field" for="phone">Phone number *</label>
+          <input type="tel" id="phone" required>
+        </div>
+      </div>
+      <div class="grid2">
+        <div class="field-block">
+          <label class="field" for="email">Email</label>
+          <input type="email" id="email">
+        </div>
+        <div class="field-block">
+          <label class="field" for="date">Pickup / delivery date *</label>
+          <input type="date" id="date" required>
+        </div>
+      </div>
+      <div class="field-block">
+        <label class="field" for="occasion">Occasion (optional)</label>
+        <input type="text" id="occasion" placeholder="e.g. birthday, anniversary, baby shower">
+      </div>
+    </section>
+
+    <section class="card" id="s-cake">
+      <h2><span class="num">02</span>Cake &amp; Flavor</h2>
+      <p class="sub">Choose your cake type first &mdash; the flavor list will update.</p>
+      <fieldset>
+        <legend class="field">Cake type *</legend>
+        <div class="choices">
+          <div class="choice">
+            <input type="radio" name="cakeType" id="ct-cheese" value="Cheesecake">
+            <label for="ct-cheese">Cheesecake</label>
+          </div>
+          <div class="choice">
+            <input type="radio" name="cakeType" id="ct-regular" value="Regular Cake">
+            <label for="ct-regular">Regular Cake</label>
+          </div>
+        </div>
+      </fieldset>
+      <div class="field-block">
+        <label class="field" for="flavor">Flavor *</label>
+        <select id="flavor" disabled>
+          <option value="">Select a cake type first&hellip;</option>
+        </select>
+      </div>
+    </section>
+
+    <section class="card" id="s-filling">
+      <h2><span class="num">03</span>Filling</h2>
+      <p class="sub">Select any that apply &mdash; layer as many as you like.</p>
+      <div class="choices" id="fillingChoices"></div>
+    </section>
+
+    <section class="card" id="s-frosting">
+      <h2><span class="num">04</span>Frosting</h2>
+      <p class="sub">Pick one or more finishes. Each reveals its own flavor options.</p>
+
+      <div class="field-block">
+        <div class="choice" style="display:inline-block;margin-right:10px;">
+          <input type="checkbox" id="fr-bc" value="Buttercream">
+          <label for="fr-bc">Buttercream</label>
+        </div>
+        <div id="cond-bc" class="conditional">
+          <label class="field">Buttercream flavor</label>
+          <div class="choices" id="bcFlavors"></div>
+        </div>
+      </div>
+
+      <div class="field-block">
+        <div class="choice" style="display:inline-block;margin-right:10px;">
+          <input type="checkbox" id="fr-cc" value="Cream Cheese Frosting">
+          <label for="fr-cc">Cream Cheese Frosting</label>
+        </div>
+        <div id="cond-cc" class="conditional">
+          <label class="field">Cream cheese frosting flavor</label>
+          <div class="choices" id="ccFlavors"></div>
+        </div>
+      </div>
+
+      <div class="field-block">
+        <div class="choice" style="display:inline-block;margin-right:10px;">
+          <input type="checkbox" id="fr-gan" value="Chocolate Ganache">
+          <label for="fr-gan">Chocolate Ganache</label>
+        </div>
+        <div id="cond-gan" class="conditional">
+          <label class="field">Ganache type</label>
+          <div class="choices" id="ganFlavors"></div>
+        </div>
+      </div>
+    </section>
+
+    <section class="card" id="s-size">
+      <h2><span class="num">05</span>Cake Size</h2>
+      <p class="sub">One size per order.</p>
+      <div class="choices" id="sizeChoices"></div>
+    </section>
+
+    <section class="card" id="s-decor">
+      <h2><span class="num">06</span>Decor &amp; Notes</h2>
+      <p class="sub">Colors, theme, piping style, toppers, writing on the cake &mdash; anything you'd like us to know.</p>
+      <textarea id="decor" rows="5" placeholder="e.g. Blush pink and gold, fresh flowers on top, 'Happy Birthday Aisha' in gold script, gold leaf accents on the side..."></textarea>
+    </section>
+
+    <section class="card" id="s-photos">
+      <h2><span class="num">07</span>Inspiration Photos</h2>
+      <p class="sub">Upload up to 3 reference images. Add a note on each about what you like about it.</p>
+      <div class="photo-grid">
+        <div class="photo-slot">
+          <div class="thumb" id="thumb1">Image 1</div>
+          <input type="file" accept="image/*" id="photo1">
+          <textarea id="caption1" placeholder="What do you like about this one?"></textarea>
+        </div>
+        <div class="photo-slot">
+          <div class="thumb" id="thumb2">Image 2</div>
+          <input type="file" accept="image/*" id="photo2">
+          <textarea id="caption2" placeholder="What do you like about this one?"></textarea>
+        </div>
+        <div class="photo-slot">
+          <div class="thumb" id="thumb3">Image 3</div>
+          <input type="file" accept="image/*" id="photo3">
+          <textarea id="caption3" placeholder="What do you like about this one?"></textarea>
+        </div>
+      </div>
+    </section>
+
+    <div class="submit-row">
+      <button type="button" class="btn-ghost" id="resetBtn">Clear form</button>
+      <button type="submit" class="btn-primary">Review order</button>
+    </div>
+    <div class="error-msg" id="errorMsg">Please fill in your name, phone, delivery date, cake type, flavor, and size before continuing.</div>
+  </form>
+
+  <!-- SUMMARY -->
+  <div id="summaryView">
+    <div class="receipt">
+      <h2 class="title">Order Summary</h2>
+      <div class="order-id mono" id="orderId"></div>
+
+      <div class="rblock"><h3>Customer</h3></div>
+      <div class="rline"><span class="k">Name</span><span class="v" id="sum-name"></span></div>
+      <div class="rline"><span class="k">Phone</span><span class="v" id="sum-phone"></span></div>
+      <div class="rline"><span class="k">Email</span><span class="v" id="sum-email"></span></div>
+      <div class="rline"><span class="k">Date needed</span><span class="v" id="sum-date"></span></div>
+      <div class="rline"><span class="k">Occasion</span><span class="v" id="sum-occasion"></span></div>
+
+      <div class="rblock"><h3>Cake</h3></div>
+      <div class="rline"><span class="k">Type</span><span class="v" id="sum-cakeType"></span></div>
+      <div class="rline"><span class="k">Flavor</span><span class="v" id="sum-flavor"></span></div>
+      <div class="rline"><span class="k">Filling</span><span class="v" id="sum-filling"></span></div>
+      <div class="rline"><span class="k">Frosting</span><span class="v" id="sum-frosting"></span></div>
+      <div class="rline"><span class="k">Size</span><span class="v" id="sum-size"></span></div>
+
+      <div class="rblock"><h3>Decor Notes</h3></div>
+      <div class="rline"><span class="v" id="sum-decor" style="text-align:left;width:100%;"></span></div>
+
+      <div class="rblock" id="sum-photos-block" style="display:none;"><h3>Inspiration Photos</h3>
+        <div class="summary-photos" id="sum-photos"></div>
+      </div>
+
+      <div class="receipt-actions">
+        <button type="button" class="btn-ghost" id="editBtn">Edit order</button>
+        <button type="button" class="btn-primary" id="printBtn">Print / Save as PDF</button>
+        <button type="button" class="btn-ghost" id="copyBtn">Copy summary as text</button>
+        <button type="button" class="btn-ghost" id="emailBtn">Email this order</button>
+      </div>
+    </div>
+  </div>
+
+</div>
+</div>
+
+<script>
+// ---------- DATA ----------
+const flavorsByCakeType = {
+  "Cheesecake": ["Original","Gulab Jamun","Ras Malai","Berry","Cookies and Cream"],
+  "Regular Cake": ["Vanilla","Cardamom","Ras Malai","Coconut Tres Leches","Vanilla Tres Leches","Chocolate","Double Chocolate","Strawberry","Matcha","Carrot","Banana","Blueberry Lemon","Lemon","Tiramisu"]
+};
+const fillings = ["Lemon Cream","Strawberry Cream","Dubai Pistachio","Kheer","Berry Cream","Mango Custard","Egg Protein Custard","Chocolate Cream","Whipped Cream","Coffee Cream","Mixed Nuts Crunch"];
+const buttercreamFlavors = ["Vanilla","Chocolate","Strawberry","Mango","Cardamom"];
+const creamCheeseFlavors = ["Vanilla","Chocolate","Strawberry","Mango","Cardamom"];
+const ganacheTypes = ["Dark Chocolate","Semisweet Chocolate","White Chocolate"];
+const sizes = ["9\" Round \u2013 2 Layer","9\" Round \u2013 3 Layer","10\" x 6\" Rectangle","6\" Round","Sheet Cake"];
+
+// ---------- BUILD PILL GROUPS ----------
+function buildPillGroup(container, name, options, type){
+  container.innerHTML = "";
+  options.forEach((opt,i)=>{
+    const id = name+"-"+i;
+    const div = document.createElement("div");
+    div.className = "choice";
+    div.innerHTML = `<input type="${type}" name="${name}" id="${id}" value="${opt}"><label for="${id}">${opt}</label>`;
+    container.appendChild(div);
+  });
+}
+buildPillGroup(document.getElementById("fillingChoices"),"filling",fillings,"checkbox");
+buildPillGroup(document.getElementById("bcFlavors"),"bcFlavor",buttercreamFlavors,"radio");
+buildPillGroup(document.getElementById("ccFlavors"),"ccFlavor",creamCheeseFlavors,"radio");
+buildPillGroup(document.getElementById("ganFlavors"),"ganFlavor",ganacheTypes,"radio");
+buildPillGroup(document.getElementById("sizeChoices"),"size",sizes,"radio");
+
+// ---------- CAKE TYPE -> FLAVOR ----------
+const flavorSelect = document.getElementById("flavor");
+document.querySelectorAll('input[name="cakeType"]').forEach(r=>{
+  r.addEventListener("change", ()=>{
+    const list = flavorsByCakeType[r.value] || [];
+    flavorSelect.disabled = false;
+    flavorSelect.innerHTML = '<option value="">Choose a flavor&hellip;</option>' +
+      list.map(f=>`<option value="${f}">${f}</option>`).join("");
+    updateTracker();
+  });
+});
+
+// ---------- FROSTING CONDITIONALS ----------
+function wireConditional(checkboxId, conditionalId){
+  const cb = document.getElementById(checkboxId);
+  const cond = document.getElementById(conditionalId);
+  cb.addEventListener("change", ()=>{
+    cond.classList.toggle("show", cb.checked);
+    updateTracker();
+  });
+}
+wireConditional("fr-bc","cond-bc");
+wireConditional("fr-cc","cond-cc");
+wireConditional("fr-gan","cond-gan");
+
+// ---------- PHOTO PREVIEWS ----------
+const photoData = {1:null,2:null,3:null};
+[1,2,3].forEach(n=>{
+  document.getElementById("photo"+n).addEventListener("change", (e)=>{
+    const file = e.target.files[0];
+    const thumb = document.getElementById("thumb"+n);
+    if(!file){ photoData[n]=null; thumb.textContent = "Image "+n; return; }
+    const reader = new FileReader();
+    reader.onload = (ev)=>{
+      photoData[n] = ev.target.result;
+      thumb.innerHTML = `<img src="${ev.target.result}" alt="Inspiration ${n}">`;
+      updateTracker();
+    };
+    reader.readAsDataURL(file);
+  });
+});
+
+// ---------- TRACKER ----------
+function sectionFilled(id){
+  switch(id){
+    case "s-contact":
+      return document.getElementById("name").value.trim() && document.getElementById("phone").value.trim() && document.getElementById("date").value;
+    case "s-cake":
+      return document.querySelector('input[name="cakeType"]:checked') && flavorSelect.value;
+    case "s-filling":
+      return document.querySelectorAll('input[name="filling"]:checked').length > 0;
+    case "s-frosting":
+      return document.getElementById("fr-bc").checked || document.getElementById("fr-cc").checked || document.getElementById("fr-gan").checked;
+    case "s-size":
+      return document.querySelector('input[name="size"]:checked');
+    case "s-decor":
+      return document.getElementById("decor").value.trim().length > 0;
+    case "s-photos":
+      return photoData[1] || photoData[2] || photoData[3];
+  }
+  return false;
+}
+function updateTracker(){
+  document.querySelectorAll(".tracker .tier").forEach(t=>{
+    t.classList.toggle("done", !!sectionFilled(t.dataset.for));
+  });
+}
+document.getElementById("orderForm").addEventListener("input", updateTracker);
+document.getElementById("orderForm").addEventListener("change", updateTracker);
+
+// ---------- RESET ----------
+document.getElementById("resetBtn").addEventListener("click", ()=>{
+  document.getElementById("orderForm").reset();
+  flavorSelect.disabled = true;
+  flavorSelect.innerHTML = '<option value="">Select a cake type first&hellip;</option>';
+  document.querySelectorAll(".conditional").forEach(c=>c.classList.remove("show"));
+  [1,2,3].forEach(n=>{ photoData[n]=null; document.getElementById("thumb"+n).innerHTML = "Image "+n; });
+  updateTracker();
+});
+
+// ---------- SUBMIT / SUMMARY ----------
+function joinChecked(name){
+  return Array.from(document.querySelectorAll(`input[name="${name}"]:checked`)).map(i=>i.value);
+}
+function buildFrostingList(){
+  const list = [];
+  if(document.getElementById("fr-bc").checked){
+    const f = document.querySelector('input[name="bcFlavor"]:checked');
+    list.push("Buttercream" + (f ? " (" + f.value + ")" : ""));
+  }
+  if(document.getElementById("fr-cc").checked){
+    const f = document.querySelector('input[name="ccFlavor"]:checked');
+    list.push("Cream Cheese Frosting" + (f ? " (" + f.value + ")" : ""));
+  }
+  if(document.getElementById("fr-gan").checked){
+    const f = document.querySelector('input[name="ganFlavor"]:checked');
+    list.push("Chocolate Ganache" + (f ? " (" + f.value + ")" : ""));
+  }
+  return list;
+}
+
+let lastOrderText = "";
+
+document.getElementById("orderForm").addEventListener("submit", (e)=>{
+  e.preventDefault();
+  const name = document.getElementById("name").value.trim();
+  const phone = document.getElementById("phone").value.trim();
+  const date = document.getElementById("date").value;
+  const cakeType = document.querySelector('input[name="cakeType"]:checked');
+  const flavor = flavorSelect.value;
+  const size = document.querySelector('input[name="size"]:checked');
+  const errorMsg = document.getElementById("errorMsg");
+
+  if(!name || !phone || !date || !cakeType || !flavor || !size){
+    errorMsg.style.display = "block";
+    errorMsg.scrollIntoView({behavior:"smooth", block:"center"});
+    return;
+  }
+  errorMsg.style.display = "none";
+
+  const email = document.getElementById("email").value.trim();
+  const occasion = document.getElementById("occasion").value.trim();
+  const fillingList = joinChecked("filling");
+  const frostingList = buildFrostingList();
+  const decor = document.getElementById("decor").value.trim();
+
+  const orderId = "CAKE-" + Date.now().toString().slice(-6);
+  document.getElementById("orderId").textContent = "Order ref: " + orderId;
+
+  document.getElementById("sum-name").textContent = name;
+  document.getElementById("sum-phone").textContent = phone;
+  document.getElementById("sum-email").textContent = email || "\u2014";
+  document.getElementById("sum-date").textContent = date;
+  document.getElementById("sum-occasion").textContent = occasion || "\u2014";
+  document.getElementById("sum-cakeType").textContent = cakeType.value;
+  document.getElementById("sum-flavor").textContent = flavor;
+  document.getElementById("sum-filling").textContent = fillingList.length ? fillingList.join(", ") : "\u2014";
+  document.getElementById("sum-frosting").textContent = frostingList.length ? frostingList.join(", ") : "\u2014";
+  document.getElementById("sum-size").textContent = size.value;
+  document.getElementById("sum-decor").textContent = decor || "\u2014";
+
+  const photosBlock = document.getElementById("sum-photos-block");
+  const photosWrap = document.getElementById("sum-photos");
+  photosWrap.innerHTML = "";
+  let anyPhoto = false;
+  [1,2,3].forEach(n=>{
+    if(photoData[n]){
+      anyPhoto = true;
+      const cap = document.getElementById("caption"+n).value.trim();
+      const fig = document.createElement("figure");
+      fig.innerHTML = `<img src="${photoData[n]}" alt="Inspiration ${n}"><figcaption>${cap || "(no note added)"}</figcaption>`;
+      photosWrap.appendChild(fig);
+    }
+  });
+  photosBlock.style.display = anyPhoto ? "block" : "none";
+
+  lastOrderText =
+`CAKE ORDER \u2014 ${orderId}
+
+Name: ${name}
+Phone: ${phone}
+Email: ${email || "-"}
+Date needed: ${date}
+Occasion: ${occasion || "-"}
+
+Cake type: ${cakeType.value}
+Flavor: ${flavor}
+Filling: ${fillingList.length ? fillingList.join(", ") : "-"}
+Frosting: ${frostingList.length ? frostingList.join(", ") : "-"}
+Size: ${size.value}
+
+Decor notes:
+${decor || "-"}
+
+Inspiration photos: ${anyPhoto ? "attached separately, see captions below" : "none uploaded"}
+${[1,2,3].map(n=> photoData[n] ? `  - Photo ${n}: ${document.getElementById("caption"+n).value.trim() || "(no note)"}` : "").filter(Boolean).join("\n")}`;
+
+  document.getElementById("orderForm").style.display = "none";
+  document.getElementById("tracker").style.display = "none";
+  document.getElementById("summaryView").style.display = "block";
+  window.scrollTo({top:0,behavior:"smooth"});
+});
+
+document.getElementById("editBtn").addEventListener("click", ()=>{
+  document.getElementById("summaryView").style.display = "none";
+  document.getElementById("orderForm").style.display = "block";
+  document.getElementById("tracker").style.display = "flex";
+  window.scrollTo({top:0,behavior:"smooth"});
+});
+
+document.getElementById("printBtn").addEventListener("click", ()=> window.print());
+
+document.getElementById("copyBtn").addEventListener("click", ()=>{
+  navigator.clipboard.writeText(lastOrderText).then(()=>{
+    const btn = document.getElementById("copyBtn");
+    const old = btn.textContent;
+    btn.textContent = "Copied!";
+    setTimeout(()=> btn.textContent = old, 1600);
+  });
+});
+
+document.getElementById("emailBtn").addEventListener("click", ()=>{
+  const subject = encodeURIComponent("Cake Order \u2014 " + document.getElementById("sum-name").textContent);
+  const body = encodeURIComponent(lastOrderText + "\n\n(Please remember to attach your inspiration photos to this email.)");
+  window.location.href = `mailto:?subject=${subject}&body=${body}`;
+});
+
+updateTracker();
+</script>
+</body>
+</html>
