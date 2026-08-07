@@ -348,7 +348,19 @@
   </nav>
 
   <!-- FORM -->
-  <form id="orderForm" novalidate>
+  <!--
+    STEP 1: Replace YOUREMAIL@example.com below with the email address that should
+    receive orders. The first submission will trigger a FormSubmit confirmation
+    email — click the link in it once to activate this form.
+  -->
+  <form id="orderForm" novalidate
+        action="https://formsubmit.co/richakafle2@gmail.com"
+        method="POST"
+        enctype="multipart/form-data">
+    <input type="hidden" name="_subject" value="New cake order">
+    <input type="hidden" name="_template" value="table">
+    <input type="hidden" name="_captcha" value="true">
+    <input type="hidden" name="Order Summary" id="hiddenSummary" value="">
 
     <section class="card" id="s-contact">
       <h2><span class="num">01</span>Your Information</h2>
@@ -356,26 +368,26 @@
       <div class="grid2">
         <div class="field-block">
           <label class="field" for="name">Full name *</label>
-          <input type="text" id="name" required>
+          <input type="text" id="name" name="Name" required>
         </div>
         <div class="field-block">
           <label class="field" for="phone">Phone number *</label>
-          <input type="tel" id="phone" required>
+          <input type="tel" id="phone" name="Phone" required>
         </div>
       </div>
       <div class="grid2">
         <div class="field-block">
           <label class="field" for="email">Email</label>
-          <input type="email" id="email">
+          <input type="email" id="email" name="Email">
         </div>
         <div class="field-block">
           <label class="field" for="date">Pickup / delivery date *</label>
-          <input type="date" id="date" required>
+          <input type="date" id="date" name="Date Needed" required>
         </div>
       </div>
       <div class="field-block">
         <label class="field" for="occasion">Occasion (optional)</label>
-        <input type="text" id="occasion" placeholder="e.g. birthday, anniversary, baby shower">
+        <input type="text" id="occasion" name="Occasion" placeholder="e.g. birthday, anniversary, baby shower">
       </div>
     </section>
 
@@ -397,7 +409,7 @@
       </fieldset>
       <div class="field-block">
         <label class="field" for="flavor">Flavor *</label>
-        <select id="flavor" disabled>
+        <select id="flavor" name="Flavor" disabled>
           <option value="">Select a cake type first&hellip;</option>
         </select>
       </div>
@@ -415,7 +427,7 @@
 
       <div class="field-block">
         <div class="choice" style="display:inline-block;margin-right:10px;">
-          <input type="checkbox" id="fr-bc" value="Buttercream">
+          <input type="checkbox" id="fr-bc" name="Frosting - Buttercream" value="Buttercream">
           <label for="fr-bc">Buttercream</label>
         </div>
         <div id="cond-bc" class="conditional">
@@ -426,7 +438,7 @@
 
       <div class="field-block">
         <div class="choice" style="display:inline-block;margin-right:10px;">
-          <input type="checkbox" id="fr-cc" value="Cream Cheese Frosting">
+          <input type="checkbox" id="fr-cc" name="Frosting - Cream Cheese" value="Cream Cheese Frosting">
           <label for="fr-cc">Cream Cheese Frosting</label>
         </div>
         <div id="cond-cc" class="conditional">
@@ -437,7 +449,7 @@
 
       <div class="field-block">
         <div class="choice" style="display:inline-block;margin-right:10px;">
-          <input type="checkbox" id="fr-gan" value="Chocolate Ganache">
+          <input type="checkbox" id="fr-gan" name="Frosting - Ganache" value="Chocolate Ganache">
           <label for="fr-gan">Chocolate Ganache</label>
         </div>
         <div id="cond-gan" class="conditional">
@@ -456,7 +468,7 @@
     <section class="card" id="s-decor">
       <h2><span class="num">06</span>Decor &amp; Notes</h2>
       <p class="sub">Colors, theme, piping style, toppers, writing on the cake &mdash; anything you'd like us to know.</p>
-      <textarea id="decor" rows="5" placeholder="e.g. Blush pink and gold, fresh flowers on top, 'Happy Birthday Aisha' in gold script, gold leaf accents on the side..."></textarea>
+      <textarea id="decor" name="Decor Notes" rows="5" placeholder="e.g. Blush pink and gold, fresh flowers on top, 'Happy Birthday Aisha' in gold script, gold leaf accents on the side..."></textarea>
     </section>
 
     <section class="card" id="s-photos">
@@ -465,25 +477,25 @@
       <div class="photo-grid">
         <div class="photo-slot">
           <div class="thumb" id="thumb1">Image 1</div>
-          <input type="file" accept="image/*" id="photo1">
-          <textarea id="caption1" placeholder="What do you like about this one?"></textarea>
+          <input type="file" accept="image/*" id="photo1" name="Inspiration Photo 1">
+          <textarea id="caption1" name="Photo 1 Note" placeholder="What do you like about this one?"></textarea>
         </div>
         <div class="photo-slot">
           <div class="thumb" id="thumb2">Image 2</div>
-          <input type="file" accept="image/*" id="photo2">
-          <textarea id="caption2" placeholder="What do you like about this one?"></textarea>
+          <input type="file" accept="image/*" id="photo2" name="Inspiration Photo 2">
+          <textarea id="caption2" name="Photo 2 Note" placeholder="What do you like about this one?"></textarea>
         </div>
         <div class="photo-slot">
           <div class="thumb" id="thumb3">Image 3</div>
-          <input type="file" accept="image/*" id="photo3">
-          <textarea id="caption3" placeholder="What do you like about this one?"></textarea>
+          <input type="file" accept="image/*" id="photo3" name="Inspiration Photo 3">
+          <textarea id="caption3" name="Photo 3 Note" placeholder="What do you like about this one?"></textarea>
         </div>
       </div>
     </section>
 
     <div class="submit-row">
       <button type="button" class="btn-ghost" id="resetBtn">Clear form</button>
-      <button type="submit" class="btn-primary">Review order</button>
+      <button type="button" class="btn-primary" id="reviewBtn">Review order</button>
     </div>
     <div class="error-msg" id="errorMsg">Please fill in your name, phone, delivery date, cake type, flavor, and size before continuing.</div>
   </form>
@@ -517,10 +529,12 @@
 
       <div class="receipt-actions">
         <button type="button" class="btn-ghost" id="editBtn">Edit order</button>
-        <button type="button" class="btn-primary" id="printBtn">Print / Save as PDF</button>
+        <button type="submit" form="orderForm" class="btn-primary" id="sendBtn">Send order</button>
+        <button type="button" class="btn-ghost" id="printBtn">Print / Save as PDF</button>
         <button type="button" class="btn-ghost" id="copyBtn">Copy summary as text</button>
-        <button type="button" class="btn-ghost" id="emailBtn">Email this order</button>
+        <button type="button" class="btn-ghost" id="emailBtn">Email this order instead</button>
       </div>
+      <p class="sub" style="margin-top:14px;">"Send order" submits everything above (including your photos) straight to the bakery's inbox.</p>
     </div>
   </div>
 
@@ -659,8 +673,7 @@ function buildFrostingList(){
 
 let lastOrderText = "";
 
-document.getElementById("orderForm").addEventListener("submit", (e)=>{
-  e.preventDefault();
+document.getElementById("reviewBtn").addEventListener("click", ()=>{
   const name = document.getElementById("name").value.trim();
   const phone = document.getElementById("phone").value.trim();
   const date = document.getElementById("date").value;
@@ -733,10 +746,19 @@ ${decor || "-"}
 Inspiration photos: ${anyPhoto ? "attached separately, see captions below" : "none uploaded"}
 ${[1,2,3].map(n=> photoData[n] ? `  - Photo ${n}: ${document.getElementById("caption"+n).value.trim() || "(no note)"}` : "").filter(Boolean).join("\n")}`;
 
+  document.getElementById("hiddenSummary").value = lastOrderText;
+
   document.getElementById("orderForm").style.display = "none";
   document.getElementById("tracker").style.display = "none";
   document.getElementById("summaryView").style.display = "block";
   window.scrollTo({top:0,behavior:"smooth"});
+});
+
+document.getElementById("orderForm").addEventListener("submit", ()=>{
+  // Real send to FormSubmit — let it navigate, just give quick feedback.
+  const btn = document.getElementById("sendBtn");
+  btn.textContent = "Sending\u2026";
+  btn.disabled = true;
 });
 
 document.getElementById("editBtn").addEventListener("click", ()=>{
